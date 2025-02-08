@@ -12,7 +12,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-tags: true
 
       - name: Configure Git
         run: |
@@ -71,4 +71,5 @@ jobs:
       - name: Push new tag
         run: |
           newTag=${{ steps.create_tag.outputs.newTag }}
+          git tag -a "${newTag}" -m "Release ${newTag}"
           git push origin ${newTag}
