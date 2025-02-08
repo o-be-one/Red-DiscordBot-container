@@ -10,12 +10,12 @@ RUN pip install --user --no-cache-dir -r requirements.txt
 
 FROM python:3.11-slim
 
-LABEL org.opencontainers.image.description "Red DiscordBot in a container."
+LABEL org.opencontainers.image.description="Red DiscordBot in a container."
 
 COPY --from=builder /home/redbot/.local /home/redbot/.local
 COPY --from=builder /etc/passwd /etc/passwd
 COPY --from=builder /etc/group /etc/group
-COPY --chown=redbot:redbot entrypoint.sh /entrypoint.sh
+COPY --chown=1000:1000 entrypoint.sh /entrypoint.sh
 
 ENV PATH="/home/redbot/.local/bin:${PATH}" \
     REDBOT_NAME="mybot" \
@@ -24,9 +24,9 @@ ENV PATH="/home/redbot/.local/bin:${PATH}" \
 
 WORKDIR /home/redbot/.config
 RUN chmod +x /entrypoint.sh && \
-    chown -R redbot: /home/redbot
+    chown -R 1000:1000 /home/redbot
 
-USER redbot
+USER 1000
 
 VOLUME /home/redbot/.config
 
