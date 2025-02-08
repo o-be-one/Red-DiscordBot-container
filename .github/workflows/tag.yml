@@ -1,0 +1,72 @@
+name: Auto Tag on Main with Redbot Version
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  tag:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+
+      - name: Get latest application tag
+        id: get_latest
+        run: |
+          latestTagFull=$(git describe --tags $(git rev-list --tags --max-count=1) 2>/dev/null || echo "")
+          if [ -z "$latestTagFull" ]; then
+            echo "Aucun tag existant"
+            latestAppTag=""
+          else
+            latestAppTag=$(echo "$latestTagFull" | cut -d'-' -f1)
+          fi
+          echo "Latest application tag: ${latestAppTag}"
+          echo "::set-output name=latestAppTag::${latestAppTag}"
+
+      - name: Bump application version
+        id: bump_version
+        run: |
+          latestAppTag=${{ steps.get_latest.outputs.latestAppTag }}
+          if [ -z "$latestAppTag" ]; then
+            newAppTag="v0.1"
+          else
+            version=${latestAppTag#v}
+            IFS='.' read -r major minor <<< "$version"
+            minor=$((minor + 1))
+            newAppTag="v${major}.${minor}"
+          fi
+          echo "New application tag: ${newAppTag}"
+          echo "::set-output name=newAppTag::${newAppTag}"
+
+      - name: Get redbot version
+        id: get_redbot
+        run: |
+          if [ -f requirements.txt ]; then
+            redbot_version=$(grep -oP "Red-DiscordBot==\K[0-9.]+" requirements.txt)
+          else
+            redbot_version="3.5.16"
+          fi
+          echo "Redbot version: ${redbot_version}"
+          echo "::set-output name=redbot_version::${redbot_version}"
+
+      - name: Create new tag
+        id: create_tag
+        run: |
+          newAppTag=${{ steps.bump_version.outputs.newAppTag }}
+          redbot_version=${{ steps.get_redbot.outputs.redbot_version }}
+          newTag="${newAppTag}-redbot${redbot_version}"
+          echo "New tag: ${newTag}"
+          git tag ${newTag}
+          echo "::set-output name=newTag::${newTag}"
+
+      - name: Push new tag
+        run: |
+          newTag=${{ steps.create_tag.outputs.newTag }}
+          git push origin ${newTag}
