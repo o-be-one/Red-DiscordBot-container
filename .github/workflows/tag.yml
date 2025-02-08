@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Configure Git
         run: |
@@ -28,7 +28,7 @@ jobs:
             latestAppTag=$(echo "$latestTagFull" | cut -d'-' -f1)
           fi
           echo "Latest application tag: ${latestAppTag}"
-          echo "::set-output name=latestAppTag::${latestAppTag}"
+          echo "latestAppTag=${latestAppTag}" >> $GITHUB_OUTPUT
 
       - name: Bump application version
         id: bump_version
@@ -43,7 +43,7 @@ jobs:
             newAppTag="v${major}.${minor}"
           fi
           echo "New application tag: ${newAppTag}"
-          echo "::set-output name=newAppTag::${newAppTag}"
+          echo "newAppTag=${newAppTag}" >> $GITHUB_OUTPUT
 
       - name: Get redbot version
         id: get_redbot
@@ -54,7 +54,7 @@ jobs:
             redbot_version="3.5.16"
           fi
           echo "Redbot version: ${redbot_version}"
-          echo "::set-output name=redbot_version::${redbot_version}"
+          echo "redbot_version=${redbot_version}" >> $GITHUB_OUTPUT
 
       - name: Create new tag
         id: create_tag
@@ -64,7 +64,7 @@ jobs:
           newTag="${newAppTag}-redbot${redbot_version}"
           echo "New tag: ${newTag}"
           git tag ${newTag}
-          echo "::set-output name=newTag::${newTag}"
+          echo "newTag=${newTag}" >> $GITHUB_OUTPUT
 
       - name: Push new tag
         run: |
