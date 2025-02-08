@@ -12,8 +12,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
-          fetch-tags: 'true'
-          fetch-depth: '10'
+          fetch-tags: true
 
       - name: Configure Git
         run: |
