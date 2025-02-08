@@ -12,6 +12,7 @@ env:
 
 jobs:
   build:
+
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -60,7 +61,7 @@ jobs:
       id: build-and-push
       uses: docker/build-push-action@v6
       with:
-        context: Docker
+        context: .
         push: true
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
