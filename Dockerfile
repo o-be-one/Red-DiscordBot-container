@@ -12,6 +12,9 @@ FROM python:3.11-slim
 
 LABEL org.opencontainers.image.description="Red DiscordBot in a container."
 
+RUN apt-get update && apt-get install -y git openjdk-17-jre-headless \
+    && rm -rf /var/lib/apt/lists/*    
+
 COPY --from=builder /home/redbot/.local /usr/local/
 COPY --from=builder /etc/passwd /etc/passwd
 COPY --from=builder /etc/group /etc/group
