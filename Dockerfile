@@ -3,7 +3,7 @@ FROM python:3.11-slim AS builder
 RUN addgroup --gid 1000 redbot && \
     adduser --disabled-password --gecos "" --uid 1000 --gid 1000 redbot
 
-WORKDIR /redbot
+WORKDIR /home/redbot
 USER redbot
 COPY requirements.txt .
 RUN pip install --user --no-cache-dir -r requirements.txt
@@ -22,12 +22,12 @@ ENV PATH="/home/redbot/.local/bin:${PATH}" \
     REDBOT_PREFIX="!" \
     REDBOT_OWNER=""
 
-WORKDIR /home/redbot/.config
+WORKDIR /home/redbot/
 RUN chmod +x /entrypoint.sh && \
     chown -R 1000:1000 /home/redbot
 
 USER 1000
 
-VOLUME /home/redbot/.config
+VOLUME /home/redbot/
 
 ENTRYPOINT ["/entrypoint.sh"]
