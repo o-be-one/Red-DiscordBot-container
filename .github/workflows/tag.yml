@@ -71,5 +71,4 @@ jobs:
       - name: Push new tag
         run: |
           newTag=${{ steps.create_tag.outputs.newTag }}
-          git tag -a "${newTag}" -m "Release ${newTag}"
           git push origin ${newTag}
