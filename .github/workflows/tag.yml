@@ -11,6 +11,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-tags: true
 
       - name: Configure Git
         run: |
@@ -22,7 +24,7 @@ jobs:
         run: |
           latestTagFull=$(git describe --tags $(git rev-list --tags --max-count=1) 2>/dev/null || echo "")
           if [ -z "$latestTagFull" ]; then
-            echo "Aucun tag existant"
+            echo "No existing tag"
             latestAppTag=""
           else
             latestAppTag=$(echo "$latestTagFull" | cut -d'-' -f1)
