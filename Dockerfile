@@ -12,13 +12,12 @@ FROM python:3.11-slim
 
 LABEL org.opencontainers.image.description="Red DiscordBot in a container."
 
-COPY --from=builder /home/redbot/.local /home/redbot/.local
+COPY --from=builder /home/redbot/.local /usr/local/
 COPY --from=builder /etc/passwd /etc/passwd
 COPY --from=builder /etc/group /etc/group
 COPY --chown=1000:1000 entrypoint.sh /entrypoint.sh
 
-ENV PATH="/home/redbot/.local/bin:${PATH}" \
-    REDBOT_NAME="mybot" \
+ENV REDBOT_NAME="mybot" \
     REDBOT_PREFIX="!" \
     REDBOT_OWNER=""
 
